@@ -56,29 +56,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .login {
-        max-width: 400px;
-        margin: 50px auto;
-    }
-    label {
-        display: block;
-        margin-bottom: 0.3rem;
-    }
-    input {
-        width: 100%;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    button {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-    }
-    .error {
-        color: red;
-        font-size: 0.9rem;
-        margin-top: -0.5rem;
-        margin-bottom: 0.5rem;
-    }
-</style>

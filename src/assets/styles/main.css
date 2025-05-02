@@ -1,0 +1,17 @@
+#nav {
+    color: white;
+    background-color: #211C84;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #B5A8D5;
+}
+
+#nav-logo {
+    width: 60px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}

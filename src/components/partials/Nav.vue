@@ -1,5 +1,8 @@
 <template>
-    <nav>
+    <nav id="nav">
+        <router-link to="/dashboard">
+            <img id='nav-logo' src="/nav.png" />
+        </router-link>
         <div v-if="authStore.user">
             Welcome, {{ authStore.user.first_name }} {{ authStore.user.last_name }} |
             <button @click="logout">Logout</button>

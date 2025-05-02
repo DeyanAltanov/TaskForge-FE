@@ -37,6 +37,16 @@
                 <p v-if="errors.gender" class="error">{{ errors.gender }}</p>
             </div>
 
+            <div>
+                <label>Profile Picture</label>
+                <input type="file" @change="onFileChange" accept="image/*" />
+                <p v-if="errors.profile_picture" class="error">{{ errors.profile_picture }}</p>
+
+                <div v-if="previewUrl">
+                    <img :src="previewUrl" class="rounded-full w-20 h-20" />
+                </div>
+            </div>
+
             <div v-if="form.gender === 'other'">
                 <label>Specify Gender</label>
                 <input v-model="form.gender_other" @input="clearError('gender_other')" type="text" />
@@ -60,7 +70,7 @@
 </template>
 
 <script setup>
-    import { reactive } from 'vue'
+    import { reactive, ref } from 'vue'
     import axios from 'axios'
     import { useRouter } from 'vue-router'
     import { useAuthStore } from '../stores/auth'
@@ -77,12 +87,20 @@
         gender_other: '',
         password: '',
         password_confirmation: '',
+        profile_picture: null
     })
 
     const errors = reactive({})
+    const previewUrl = ref(null)
 
     const clearError = (field) => {
         errors[field] = ''
+    }
+
+    const onFileChange = (e) => {
+        const file = e.target.files[0]
+        form.profile_picture = file
+        previewUrl.value = URL.createObjectURL(file)
     }
 
     const register = async () => {
@@ -95,25 +113,33 @@
             form.gender = form.gender_other
         }
 
-        const payload = { ...form }
-        delete payload.gender_other
+        const formData = new FormData()
+        formData.append('first_name', form.first_name)
+        formData.append('last_name', form.last_name)
+        formData.append('email', form.email)
+        formData.append('phone', form.phone)
+        formData.append('gender', form.gender)
+        formData.append('password', form.password)
+        formData.append('password_confirmation', form.password_confirmation)
+
+        if (form.profile_picture) {
+            formData.append('profile_picture', form.profile_picture)
+        }
 
         try {
-            const response = await axios.post('/register', payload)
+            const response = await axios.post('/register', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+            })
 
             authStore.setUser(response.data.user)
 
             if (response.data.redirect) {
-                if (response.data.redirect) {
-                    window.dispatchEvent(new CustomEvent('navigate', { detail: response.data.redirect }))
-                } else {
-                    router.push({ name: 'login' })
-                }
+                window.dispatchEvent(new CustomEvent('navigate', { detail: response.data.redirect }))
             } else {
                 router.push({ name: 'dashboard' })
             }
         } catch (error) {
-            if (error.response && error.response.data.errors) {
+            if (error.response?.data?.errors) {
                 Object.assign(errors, error.response.data.errors)
             } else {
                 console.error('Registration error:', error)
@@ -121,29 +147,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .register {
-        max-width: 400px;
-        margin: 50px auto;
-    }
-    label {
-        display: block;
-        margin-bottom: 0.3rem;
-    }
-    input, select {
-        width: 100%;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    button {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-    }
-    .error {
-        color: red;
-        font-size: 0.9rem;
-        margin-top: -0.5rem;
-        margin-bottom: 0.5rem;
-    }
-</style>
