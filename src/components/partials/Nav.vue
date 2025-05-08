@@ -1,6 +1,6 @@
 <template>
     <nav id="nav">
-        <router-link to="/dashboard">
+        <router-link :to="authStore.user ? '/dashboard' : '/'">
             <img id='nav-logo' src="/nav.png" />
         </router-link>
 
@@ -24,7 +24,7 @@
 
 <script setup>
     import axios from 'axios'
-    import { ref } from 'vue'
+    import { ref, watch } from 'vue'
     import { useAuthStore } from '../../stores/auth'
     import { useRouter } from 'vue-router'
 
@@ -32,6 +32,10 @@
     const router = useRouter()
 
     const dropdownOpen = ref(false)
+
+    watch(() => authStore.user, () => {
+        dropdownOpen.value = false
+    })
 
     const toggleDropdown = () => {
         dropdownOpen.value = !dropdownOpen.value

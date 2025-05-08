@@ -7,9 +7,9 @@ import { useAuthStore } from './stores/auth'
 import './assets/styles/index.css'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
-const authStore = useAuthStore()
+app.use(pinia)
 
 axios.defaults.baseURL = 'http://taskforge.local/api'
 axios.defaults.withCredentials = true
@@ -28,6 +28,8 @@ axios.interceptors.request.use((config) => {
 })
 
 async function init() {
+  const authStore = useAuthStore()
+
   try {
     await axios.get('/sanctum/csrf-cookie', { baseURL: 'http://taskforge.local' })
 

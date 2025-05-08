@@ -39,8 +39,9 @@
         try {
             await axios.get('http://taskforge.local/sanctum/csrf-cookie', { withCredentials: true })
             const response = await axios.post('/login', form)
+            await authStore.fetchUser()
 
-            authStore.setUser(response.data.user)
+            authStore.setUser(response.data)
             localStorage.setItem('user', JSON.stringify(response.data.user))
 
             router.push({ name: 'dashboard' })
