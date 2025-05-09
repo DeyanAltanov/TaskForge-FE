@@ -1,21 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+
 import Welcome from '../components/Welcome.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue'
+import Profile from '../components/user/Profile.vue'
 
-const routes = [
+const publicRoutes = [
   { path: '/', name: 'welcome', component: Welcome },
   { path: '/login', name: 'login', component: Login },
   { path: '/register', name: 'register', component: Register },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: Dashboard,
-    meta: { requiresAuth: true },
-  }
 ]
+
+const privateRoutes = [
+  { path: '/dashboard', name: 'dashboard', component: Dashboard },
+  { path: '/profile', name: 'profile', component: Profile },
+].map(route => ({ ...route, meta: { requiresAuth: true } }))
+
+const routes = [...publicRoutes, ...privateRoutes]
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,9 +28,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   const authStore = useAuthStore()
 
-  if (!authStore.checked) {
-    return false
-  }
+  if (!authStore.checked) return false
 
   const isAuthenticated = !!authStore.user
 
@@ -35,7 +36,7 @@ router.beforeEach((to) => {
     return { name: 'login' }
   }
 
-  if (isAuthenticated && (to.name === 'login' || to.name === 'register')) {
+  if (isAuthenticated && ['login', 'register', 'welcome'].includes(to.name)) {
     return { name: 'dashboard' }
   }
 

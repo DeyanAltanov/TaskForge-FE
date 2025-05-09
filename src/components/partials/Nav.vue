@@ -6,12 +6,19 @@
 
         <div v-if="authStore.user" class="relative" ref="dropdownWrapper">
             <button @click="toggleDropdown" id='nav_profile_img_btn' class="flex items-center gap-2 focus:outline-none">
-                <img v-show="authStore.user.avatar_base64" :src="authStore.user.avatar_base64" id="nav_profile_img" class="h-10 w-10 rounded-full object-cover" />
+                <img v-show="authStore.user.profile_picture" :src="authStore.user.profile_picture" id="nav_profile_img" class="h-10 w-10 rounded-full object-cover" />
             </button>
 
-            <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10">
-                <router-link to="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</router-link>
-                <button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+            <div v-if="dropdownOpen" id="nav_dropdown" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10">
+                <router-link to="/profile" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Profile</router-link>
+                <div @click="toggleTasks" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">Tasks</div>
+                    <div id="nav_toggle_tasks" v-if="showTasks">
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Create Task</router-link>
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">My Tasks</router-link>
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Team Tasks</router-link>
+                    </div>
+                <router-link to="" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Team</router-link>
+                <router-link to="" @click.prevent="logout" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Logout</router-link>
             </div>
         </div>
 
@@ -33,6 +40,7 @@
 
     const dropdownOpen = ref(false)
     const dropdownWrapper = ref(null)
+    const showTasks = ref(false)
 
     watch(() => authStore.user, () => {
         dropdownOpen.value = false
@@ -46,6 +54,10 @@
         if (dropdownWrapper.value && !dropdownWrapper.value.contains(event.target)) {
             dropdownOpen.value = false
         }
+    }
+
+    function toggleTasks() {
+        showTasks.value = !showTasks.value
     }
 
     onMounted(() => {

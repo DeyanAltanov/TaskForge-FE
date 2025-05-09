@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 #nav {
     color: white;
     background-color: #211C84;
@@ -8,8 +10,8 @@
 }
 
 #nav_profile_img {
-    width: 45px;
-    height: 45px;
+    width: 52px;
+    height: 52px;
     display: block;
     border-radius: 25px !important;
 }
@@ -21,12 +23,13 @@
 }
 
 #nav-logo {
-    width: 60px;
-    height: 50px;
+    width: 65px;
+    height: 55px;
 }
 
 body {
     margin: 0;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .logo {
@@ -42,4 +45,105 @@ body {
 
 .logo.vue:hover {
     filter: drop-shadow(0 0 2em #42b883aa);
+}
+
+.nav_dropdown_submenu {
+    text-decoration: none;
+    color: #B5A8D5;
+    background-color: #211C84;
+    padding: 15px;
+    font-size: 17px;
+}
+
+.nav_dropdown_submenu_sub {
+    text-decoration: none;
+    background-color: #B5A8D5;
+    color: #211C84;
+    padding: 15px;
+    font-size: 17px;
+}
+
+#nav_dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    border-radius: 3px;
+    overflow: hidden;
+    right: 0.5rem;
+    z-index: 999;
+    width: 150px;
+}
+
+#nav_toggle_tasks {
+    display: flex;
+    flex-direction: column !important;
+}
+
+.page_title {
+    text-align: center;
+    color: #4D55CC;
+}
+
+#profile_structure {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#profile_card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+#profile_card_buttons {
+    margin: 0 auto;
+}
+
+.button {
+    border: none;
+    background-color: #B5A8D5;
+    color: #211C84;
+    border-radius: 2px;
+    font-size: 15px;
+}
+
+.button:hover {
+    background-color: #211C84;
+    color: #B5A8D5;
+    box-shadow: 0 0 6px #211C84;
+}
+
+#profile_card_user_details, #profile_card_pge {
+    display: flex;
+    flex-direction: column;
+}
+
+#profile_name {
+    text-align: center;
+    font-size: 20px;
+}
+
+#profile_card_img {
+    height: 80%;
+    width: 15%;
+    margin: 15px;
+}
+
+#profile_card_user_details {
+    padding: 5px;
+}
+
+#profile_card_pge p {
+    display: flex;
+}
+
+.label {
+    color: #211C84;
+    font-weight: bold;
+}
+
+.info {
+    color: #4D55CC;
 }
