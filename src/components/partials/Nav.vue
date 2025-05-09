@@ -4,9 +4,9 @@
             <img id='nav-logo' src="/nav.png" />
         </router-link>
 
-        <div v-if="authStore.user" class="relative">
+        <div v-if="authStore.user" class="relative" ref="dropdownWrapper">
             <button @click="toggleDropdown" id='nav_profile_img_btn' class="flex items-center gap-2 focus:outline-none">
-                <img id='nav_profile_img' :src="authStore.user.avatar_base64" />
+                <img v-show="authStore.user.avatar_base64" :src="authStore.user.avatar_base64" id="nav_profile_img" class="h-10 w-10 rounded-full object-cover" />
             </button>
 
             <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10">
@@ -24,7 +24,7 @@
 
 <script setup>
     import axios from 'axios'
-    import { ref, watch } from 'vue'
+    import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
     import { useAuthStore } from '../../stores/auth'
     import { useRouter } from 'vue-router'
 
@@ -32,6 +32,7 @@
     const router = useRouter()
 
     const dropdownOpen = ref(false)
+    const dropdownWrapper = ref(null)
 
     watch(() => authStore.user, () => {
         dropdownOpen.value = false
@@ -40,6 +41,20 @@
     const toggleDropdown = () => {
         dropdownOpen.value = !dropdownOpen.value
     }
+
+    const handleClickOutside = (event) => {
+        if (dropdownWrapper.value && !dropdownWrapper.value.contains(event.target)) {
+            dropdownOpen.value = false
+        }
+    }
+
+    onMounted(() => {
+        document.addEventListener('click', handleClickOutside)
+    })
+
+    onBeforeUnmount(() => {
+        document.removeEventListener('click', handleClickOutside)
+    })
 
     const logout = async () => {
         try {

@@ -44,6 +44,7 @@
             authStore.setUser(response.data)
             localStorage.setItem('user', JSON.stringify(response.data.user))
 
+            window.location.reload()
             router.push({ name: 'dashboard' })
         } catch (error) {
             if (error.response?.data?.errors) {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="authStore.checked">
     <Nav />
     <router-view />
   </div>
@@ -9,7 +9,9 @@
   import { onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import Nav from './components/partials/Nav.vue'
+  import { useAuthStore } from './stores/auth'
 
+  const authStore = useAuthStore()
   const router = useRouter()
 
   onMounted(() => {
@@ -18,18 +20,3 @@
     })
   })
 </script>
-
-<style scoped>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
-  }
-</style>
