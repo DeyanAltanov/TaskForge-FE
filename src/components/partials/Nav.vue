@@ -15,9 +15,12 @@
                     <div id="nav_toggle_tasks" v-if="showTasks">
                         <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Create Task</router-link>
                         <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">My Tasks</router-link>
-                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Team Tasks</router-link>
                     </div>
-                <router-link to="" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Team</router-link>
+                <div @click="toggleTeams" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">Teams</div>
+                    <div id="nav_toggle_teams" v-if="showTeams">
+                        <router-link to="/create_team" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Create Team</router-link>
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">My Teams</router-link>
+                    </div>
                 <router-link to="" @click.prevent="logout" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Logout</router-link>
             </div>
         </div>
@@ -41,6 +44,7 @@
     const dropdownOpen = ref(false)
     const dropdownWrapper = ref(null)
     const showTasks = ref(false)
+    const showTeams = ref(false)
 
     watch(() => authStore.user, () => {
         dropdownOpen.value = false
@@ -58,6 +62,10 @@
 
     function toggleTasks() {
         showTasks.value = !showTasks.value
+    }
+
+    function toggleTeams() {
+        showTeams.value = !showTeams.value
     }
 
     onMounted(() => {

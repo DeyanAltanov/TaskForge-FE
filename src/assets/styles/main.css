@@ -74,7 +74,7 @@ body {
     width: 150px;
 }
 
-#nav_toggle_tasks {
+#nav_toggle_tasks, #nav_toggle_teams {
     display: flex;
     flex-direction: column !important;
 }

@@ -6,6 +6,7 @@ import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue'
 import Profile from '../components/user/Profile.vue'
+import Team from '../components/team/CreateTeam.vue'
 
 const publicRoutes = [
   { path: '/', name: 'welcome', component: Welcome },
@@ -16,6 +17,7 @@ const publicRoutes = [
 const privateRoutes = [
   { path: '/dashboard', name: 'dashboard', component: Dashboard },
   { path: '/profile', name: 'profile', component: Profile },
+  { path: '/create_team', name: 'create_team', component: Team },
 ].map(route => ({ ...route, meta: { requiresAuth: true } }))
 
 const routes = [...publicRoutes, ...privateRoutes]

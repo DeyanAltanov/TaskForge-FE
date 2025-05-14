@@ -128,7 +128,7 @@
 
         try {
             const response = await axios.post('/register', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' }
             })
 
             authStore.setUser(response.data.user)
