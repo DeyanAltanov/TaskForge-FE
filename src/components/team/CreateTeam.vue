@@ -21,6 +21,7 @@
     import axios from 'axios'
     import { useRouter } from 'vue-router'
     import { useAuthStore } from '../../stores/auth'
+    import { usePopup  } from '../../stores/popup'
 
     useRouter()
     useAuthStore()
@@ -29,6 +30,8 @@
         name: '',
         description: ''
     })
+
+    const { show } = usePopup()
 
     const errors = reactive({})
 
@@ -46,10 +49,16 @@
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 
-            window.location.href = '/dashboard'
+            show('Team created!', 'success')
+            // setTimeout(() => {
+            //     window.location.href = '/dashboard'
+            // }, 500)
         } catch (error) {
             if (error.response?.status === 422 && error.response.data.errors) {
                 Object.assign(errors, error.response.data.errors)
+                const firstField = Object.keys(error.response.data.errors)[0]
+                const firstError = error.response.data.errors[firstField][0]
+                show(firstError, 'error')
             } else {
                 console.error('❌ Server error:', error)
             }
