@@ -22,8 +22,8 @@
     import { useRouter } from 'vue-router'
     import { useAuthStore } from '../../stores/auth'
 
-    const router = useRouter()
-    const authStore = useAuthStore()
+    useRouter()
+    useAuthStore()
 
     const form = reactive({
         name: '',
@@ -42,17 +42,11 @@
         formData.append('description', form.description)
 
         try {
-            const response = await axios.post('/create_team', formData, {
+            await axios.post('/create_team', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 
-            authStore.setUser(response.data.user)
-
-            if (response.data.redirect) {
-                window.dispatchEvent(new CustomEvent('navigate', { detail: response.data.redirect }))
-            } else {
-                router.push({ name: 'dashboard' })
-            }
+            window.location.href = '/dashboard'
         } catch (error) {
             if (error.response?.status === 422 && error.response.data.errors) {
                 Object.assign(errors, error.response.data.errors)

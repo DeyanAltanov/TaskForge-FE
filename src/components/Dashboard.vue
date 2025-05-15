@@ -9,7 +9,7 @@
 
     onMounted(async () => {
         try {
-            const response = await axios.get('/dashboard')
+            await axios.get('/dashboard')
         } catch (error) {
             console.error('Failed to load dashboard data:', error)
         }
