@@ -11,24 +11,28 @@
 
             <div v-if="dropdownOpen" id="nav_dropdown" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10">
                 <router-link to="/profile" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Profile</router-link>
-                <div @click="toggleTasks" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">Tasks</div>
+                <div @click="toggleTasks" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
+                    <span v-html="showTasks ? '&#9661;' : '&#9654;'"></span> Tasks
+                </div>
                     <div id="nav_toggle_tasks" v-if="showTasks">
-                        <router-link to="/create_task" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Create Task</router-link>
-                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">My Tasks</router-link>
+                        <router-link to="/create_task" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Task</router-link>
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - My Tasks</router-link>
                     </div>
-                <div @click="toggleTeams" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">Teams</div>
+                    <div @click="toggleTeams" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
+                        <span v-html="showTeams ? '&#9661;' : '&#9654;'"></span> Teams
+                    </div>
                     <div id="nav_toggle_teams" v-if="showTeams">
-                        <router-link to="/create_team" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">Create Team</router-link>
-                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">All Teams</router-link>
-                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100">My Teams</router-link>
+                        <router-link to="/create_team" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Team</router-link>
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - All Teams</router-link>
+                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - My Teams</router-link>
                     </div>
                 <router-link to="" @click.prevent="logout" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Logout</router-link>
             </div>
         </div>
 
-        <div v-else>
-            <router-link to="/login">Login</router-link> |
-            <router-link to="/register">Register</router-link>
+        <div class="nav-links" v-else>
+            <router-link to="/login" class="nav-link">Login</router-link>
+            <router-link to="/register" class="nav-link">Register</router-link>
         </div>
     </nav>
 </template>
@@ -58,6 +62,8 @@
     const handleClickOutside = (event) => {
         if (dropdownWrapper.value && !dropdownWrapper.value.contains(event.target)) {
             dropdownOpen.value = false
+            showTasks.value = false
+            showTeams.value = false
         }
     }
 

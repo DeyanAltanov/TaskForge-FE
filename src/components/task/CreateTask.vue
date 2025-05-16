@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="form">
-            <h2>Create Task</h2>
+            <h1 class="page_title">Create Task</h1>
             <form @submit.prevent="create_task">
                 <div>
                     <label>Title</label>
@@ -20,21 +20,23 @@
                     <option value="high">High</option>
                     <option value="critical">Critical</option>
                 </select>
-                <Multiselect
-                    v-model="form.assigned_to"
-                    :options="users"
-                    label="name"
-                    track-by="id"
-                    placeholder="Assign to user"
-                />
-                <Multiselect
-                    v-model="form.team"
-                    :options="teams"
-                    label="name"
-                    track-by="id"
-                    placeholder="Assign to team"
-                />
-                <p v-if="errors.team" class="error" style="margin-top: 5px;">{{ errors.team[0] }}</p>
+                <div class="multiselect">
+                    <Multiselect
+                        v-model="form.assigned_to"
+                        :options="users"
+                        label="name"
+                        track-by="id"
+                        placeholder="Assign to user"
+                    />
+                    <Multiselect
+                        v-model="form.team"
+                        :options="teams"
+                        label="name"
+                        track-by="id"
+                        placeholder="Assign to team"
+                    />
+                    <p v-if="errors.team" class="error" style="margin-top: 5px;">{{ errors.team[0] }}</p>
+                </div>
                 <button type="submit">Create</button>
             </form>
         </div>

@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="form">
-            <h2>Create Team</h2>
+            <h1 class="page_title">Create Team</h1>
             <form @submit.prevent="create_team">
                 <div>
                     <label>Name</label>

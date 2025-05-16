@@ -176,3 +176,14 @@ main {
     background-color: #3cb879;
     color: #aae8c1;
 }
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+}
