@@ -1,20 +1,22 @@
 <template>
-    <div class="create_team">
-        <h2>Create Team</h2>
-        <form @submit.prevent="create_team">
-            <div>
-                <label>Name</label>
-                <input v-model="form.name" @input="clearError('name')" type="text" />
-                <p v-if="errors.name" class="error">{{ errors.name }}</p>
-            </div>
+    <main>
+        <div class="form">
+            <h2>Create Team</h2>
+            <form @submit.prevent="create_team">
+                <div>
+                    <label>Name</label>
+                    <input v-model="form.name" @input="clearError('name')" type="text" />
+                    <p v-if="errors.name" class="error">{{ errors.name[0] }}</p>
+                </div>
 
-            <div>
-                <label>Description</label>
-                <input v-model="form.description" @input="clearError('description')" type="text" />
-            </div>
-            <button type="submit">Create</button>
-        </form>
-    </div>
+                <div>
+                    <label>Description</label>
+                    <input v-model="form.description" @input="clearError('description')" type="text" />
+                </div>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </main>
 </template>
 <script setup>
     import { reactive } from 'vue'
@@ -50,9 +52,9 @@
             })
 
             show('Team created!', 'success')
-            // setTimeout(() => {
-            //     window.location.href = '/dashboard'
-            // }, 500)
+            setTimeout(() => {
+                window.location.href = '/dashboard'
+            }, 500)
         } catch (error) {
             if (error.response?.status === 422 && error.response.data.errors) {
                 Object.assign(errors, error.response.data.errors)

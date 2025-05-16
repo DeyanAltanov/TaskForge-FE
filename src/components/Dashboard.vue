@@ -1,7 +1,9 @@
 <template>
-    <div>
-        <h1 class="page_title">Dashboard</h1>
-    </div>
+    <main>
+        <div>
+            <h1 class="page_title">Dashboard</h1>
+        </div>
+    </main>
 </template>
 <script>
     import { onMounted } from 'vue'

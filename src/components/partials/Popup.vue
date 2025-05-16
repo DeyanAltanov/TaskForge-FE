@@ -22,6 +22,6 @@
     })
 
     const typeClass = computed(() => {
-        return props.type === 'error' ? 'bg-red-600' : 'bg-green-600'
+        return props.type === 'error' ? 'popup-error' : 'popup-success'
     })
 </script>

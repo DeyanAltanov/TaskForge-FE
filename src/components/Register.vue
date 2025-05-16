@@ -1,72 +1,74 @@
 <template>
-    <div class="register">
-        <h2>Register</h2>
-        <form @submit.prevent="register">
-            <div>
-                <label>First Name</label>
-                <input v-model="form.first_name" @input="clearError('first_name')" type="text" />
-                <p v-if="errors.first_name" class="error">{{ errors.first_name }}</p>
-            </div>
-
-            <div>
-                <label>Last Name</label>
-                <input v-model="form.last_name" @input="clearError('last_name')" type="text" />
-                <p v-if="errors.last_name" class="error">{{ errors.last_name }}</p>
-            </div>
-
-            <div>
-                <label>Email</label>
-                <input v-model="form.email" @input="clearError('email')" type="email" />
-                <p v-if="errors.email" class="error">{{ errors.email }}</p>
-            </div>
-
-            <div>
-                <label>Phone</label>
-                <input v-model="form.phone" @input="clearError('phone')" type="text" />
-                <p v-if="errors.phone" class="error">{{ errors.phone }}</p>
-            </div>
-
-            <div>
-                <label>Gender</label>
-                <select v-model="form.gender" @change="clearError('gender')">
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-                <p v-if="errors.gender" class="error">{{ errors.gender }}</p>
-            </div>
-
-            <div>
-                <label>Profile Picture</label>
-                <input type="file" @change="onFileChange" accept="image/*" />
-                <p v-if="errors.profile_picture" class="error">{{ errors.profile_picture }}</p>
-
-                <div v-if="previewUrl">
-                    <img :src="previewUrl" class="rounded-full w-20 h-20" />
+    <main>
+        <div class="form">
+            <h2>Register</h2>
+            <form @submit.prevent="register">
+                <div>
+                    <label>First Name</label>
+                    <input v-model="form.first_name" @input="clearError('first_name')" type="text" />
+                    <p v-if="errors.first_name" class="error">{{ errors.first_name[0] }}</p>
                 </div>
-            </div>
 
-            <div v-if="form.gender === 'other'">
-                <label>Specify Gender</label>
-                <input v-model="form.gender_other" @input="clearError('gender_other')" type="text" />
-                <p v-if="errors.gender_other" class="error">{{ errors.gender_other }}</p>
-            </div>
+                <div>
+                    <label>Last Name</label>
+                    <input v-model="form.last_name" @input="clearError('last_name')" type="text" />
+                    <p v-if="errors.last_name" class="error">{{ errors.last_name[0] }}</p>
+                </div>
 
-            <div>
-                <label>Password</label>
-                <input v-model="form.password" @input="clearError('password')" type="password" />
-                <p v-if="errors.password" class="error">{{ errors.password }}</p>
-            </div>
+                <div>
+                    <label>Email</label>
+                    <input v-model="form.email" @input="clearError('email')" type="email" />
+                    <p v-if="errors.email" class="error">{{ errors.email[0] }}</p>
+                </div>
 
-            <div>
-                <label>Confirm Password</label>
-                <input v-model="form.password_confirmation" type="password" />
-            </div>
+                <div>
+                    <label>Phone</label>
+                    <input v-model="form.phone" @input="clearError('phone')" type="text" />
+                    <p v-if="errors.phone" class="error">{{ errors.phone[0] }}</p>
+                </div>
 
-            <button type="submit">Register</button>
-        </form>
-    </div>
+                <div>
+                    <label>Gender</label>
+                    <select v-model="form.gender" @change="clearError('gender')">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <p v-if="errors.gender" class="error">{{ errors.gender[0] }}</p>
+                </div>
+
+                <div>
+                    <label>Profile Picture</label>
+                    <input type="file" @change="onFileChange" accept="image/*" />
+                    <p v-if="errors.profile_picture" class="error">{{ errors.profile_picture[0] }}</p>
+
+                    <div v-if="previewUrl">
+                        <img :src="previewUrl" class="rounded-full w-20 h-20" />
+                    </div>
+                </div>
+
+                <div v-if="form.gender === 'other'">
+                    <label>Specify Gender</label>
+                    <input v-model="form.gender_other" @input="clearError('gender_other')" type="text" />
+                    <p v-if="errors.gender_other" class="error">{{ errors.gender_other[0] }}</p>
+                </div>
+
+                <div>
+                    <label>Password</label>
+                    <input v-model="form.password" @input="clearError('password')" type="password" />
+                    <p v-if="errors.password" class="error">{{ errors.password[0] }}</p>
+                </div>
+
+                <div>
+                    <label>Confirm Password</label>
+                    <input v-model="form.password_confirmation" type="password" />
+                </div>
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </main>
 </template>
 
 <script setup>

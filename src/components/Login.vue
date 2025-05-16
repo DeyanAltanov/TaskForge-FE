@@ -1,22 +1,24 @@
 <template>
-    <div class="login">
-        <h2>Login</h2>
-        <form @submit.prevent="login">
-            <div>
-                <label>Email</label>
-                <input v-model="form.email" type="email" />
-                <p v-if="errors.email" class="error">{{ errors.email }}</p>
-            </div>
+    <main>
+        <div class="form">
+            <h2>Login</h2>
+            <form @submit.prevent="login">
+                <div>
+                    <label>Email</label>
+                    <input v-model="form.email" type="email" />
+                    <p v-if="errors.email" class="error">{{ errors.email[0] }}</p>
+                </div>
 
-            <div>
-                <label>Password</label>
-                <input v-model="form.password" type="password" />
-                <p v-if="errors.password" class="error">{{ errors.password }}</p>
-            </div>
+                <div>
+                    <label>Password</label>
+                    <input v-model="form.password" type="password" />
+                    <p v-if="errors.password" class="error">{{ errors.password[0] }}</p>
+                </div>
 
-            <button type="submit">Login</button>
-        </form>
-    </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </main>
 </template>
 
 <script setup>
