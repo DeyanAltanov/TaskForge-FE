@@ -23,7 +23,7 @@
                     </div>
                     <div id="nav_toggle_teams" v-if="showTeams">
                         <router-link to="/create_team" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Team</router-link>
-                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - All Teams</router-link>
+                        <router-link to="/all_teams" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - All Teams</router-link>
                         <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - My Teams</router-link>
                     </div>
                 <router-link to="" @click.prevent="logout" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Logout</router-link>
