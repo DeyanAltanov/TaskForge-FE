@@ -5,19 +5,54 @@
 label {
     display: block;
     margin-bottom: 0.3rem;
+    font-weight: 500;
 }
-input, select {
+input, select, textarea {
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 1rem;
 }
-button {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-}
+
 .error {
     color: red;
     font-size: 0.9rem;
     margin-top: -0.5rem;
     margin-bottom: 0.5rem;
+}
+
+.form-btns {
+    display: flex;
+    justify-content: space-between;
+}
+
+textarea {
+    height: 55px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.save {
+    background-color: #45cb8e !important;
+    color: white !important;
+}
+
+.save:hover {
+    background-color: #7de0b0 !important;
+    box-shadow: 0 0 6px #7de0b0 !important;
+    color: white !important;
+}
+
+.back {
+    background-color: #f56926 !important;
+    color: white !important;
+}
+
+.back:hover {
+    background-color: #f6936c !important;
+    box-shadow: 0 0 6px #f6936c !important;
+    color: white !important;
 }

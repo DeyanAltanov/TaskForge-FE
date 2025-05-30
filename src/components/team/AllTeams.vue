@@ -8,7 +8,9 @@
                 label="name"
                 track-by="id"
                 placeholder="Select team"
+                @input="teamError = ''"
             />
+            <p v-if="teamError" class="error" style="margin: 3px;">{{ teamError }}</p>
             <button type="button" @click="editTeam">Edit</button>
         </div>
     </main>
@@ -17,9 +19,12 @@
     import { ref, onMounted } from 'vue'
     import axios from 'axios'
     import Multiselect from 'vue-multiselect'
+    import { useRouter } from 'vue-router'
 
     const teams = ref([])
     const users = ref([])
+    const teamError = ref('')
+    const router = useRouter()
 
     const form = ref({
         team: null
@@ -37,8 +42,11 @@
 
     function editTeam() {
         if (!form.value.team) {
-            console.warn('Please select a team!')
+            teamError.value = 'Please select a team!'
             return
         }
+
+        teamError.value = ''
+        router.push({ name: 'edit_team', params: { id: form.value.team.id } })
     }
 </script>

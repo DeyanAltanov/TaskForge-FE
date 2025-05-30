@@ -1,63 +1,72 @@
 <template>
     <main>
         <div class="form">
-            <h1 class="page_title">Create Team</h1>
-            <form @submit.prevent="create_team">
+            <h1 class="page_title">Edit {{ form.name }}</h1>
+            <form @submit.prevent="edit_team">
                 <div class="form-field">
                     <label>Name</label>
-                    <input v-model="form.name" @input="clearError('name')" type="text" />
+                    <input v-model="form.name" type="text" @input="clearError('name')" placeholder="Team name" />
                     <p v-if="errors.name" class="error">{{ errors.name[0] }}</p>
                 </div>
 
                 <div class="form-field">
                     <label>Description</label>
-                    <input v-model="form.description" @input="clearError('description')" type="text" />
+                    <textarea v-model="form.description" @input="clearError('description')" placeholder="Description"></textarea>
                 </div>
 
                 <div class="form-btns">
                     <button type="button" @click="router.back()" class="button back">←</button>
-                    <button type="submit" class="button save">Create</button>
+                    <button type="button" class="button">Edit Team Members</button>
+                    <button type="submit" class="button save">Save</button>
                 </div>
             </form>
         </div>
     </main>
 </template>
 <script setup>
-    import { reactive } from 'vue'
+    import { ref, onMounted, reactive } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
     import axios from 'axios'
-    import { useRouter } from 'vue-router'
-    import { useAuthStore } from '../../stores/auth'
     import { usePopup  } from '../../stores/popup'
 
+    const route = useRoute()
     const router = useRouter()
-    const authStore = useAuthStore()
-
-    const form = reactive({
-        name: '',
-        description: ''
-    })
-
-    const { show } = usePopup()
-
     const errors = reactive({})
+    const { show } = usePopup()
 
     const clearError = (field) => {
         errors[field] = ''
     }
 
-    const create_team = async () => {
+    const form = ref({
+        name: '',
+        description: ''
+    })
+
+    onMounted(async () => {
+        try {
+            const res = await axios.get(`/teams/${route.params.id}/edit`)
+            form.value.name = res.data.name
+            form.value.description = res.data.description
+        } catch (err) {
+            console.error('❌ Error loading team:', err)
+        }
+    })
+
+    async function edit_team() {
         const formData = new FormData()
-        formData.append('name', form.name)
-        formData.append('description', form.description)
+        formData.append('name', form.value.name)
+        formData.append('description', form.value.description)
 
         try {
-            await axios.post('/create_team', formData, {
+            await axios.post(`/teams/${route.params.id}/edit`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 
-            show('Team created!', 'success')
+            show('Team updated!', 'success')
+
             setTimeout(() => {
-                window.location.href = '/dashboard'
+                router.push('/all_teams')
             }, 500)
         } catch (error) {
             if (error.response?.status === 422 && error.response.data.errors) {

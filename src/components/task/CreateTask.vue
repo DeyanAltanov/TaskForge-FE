@@ -3,13 +3,13 @@
         <div class="form">
             <h1 class="page_title">Create Task</h1>
             <form @submit.prevent="create_task">
-                <div>
+                <div class="form-field">
                     <label>Title</label>
                     <input v-model="form.title" @input="clearError('title')" type="text" />
                     <p v-if="errors.title" class="error">{{ errors.title[0] }}</p>
                 </div>
 
-                <div>
+                <div class="form-field">
                     <label>Description</label>
                     <input v-model="form.description" @input="clearError('description')" type="text" />
                     <p v-if="errors.description" class="error">{{ errors.description[0] }}</p>
@@ -37,7 +37,11 @@
                     />
                     <p v-if="errors.team" class="error" style="margin-top: 5px;">{{ errors.team[0] }}</p>
                 </div>
-                <button type="submit">Create</button>
+
+                <div class="form-btns">
+                    <button type="button" @click="router.back()" class="button back">←</button>
+                    <button type="submit" class="button save">Create</button>
+                </div>
             </form>
         </div>
     </main>
@@ -51,8 +55,8 @@
     import Multiselect from 'vue-multiselect'
     import 'vue-multiselect/dist/vue-multiselect.min.css'
 
-    useRouter()
-    useAuthStore()
+    const router = useRouter()
+    const authStore = useAuthStore()
 
     const form = reactive({
         title: '',
