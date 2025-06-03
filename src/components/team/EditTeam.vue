@@ -16,7 +16,7 @@
 
                 <div class="form-btns">
                     <button type="button" @click="router.back()" class="button back">←</button>
-                    <button type="button" class="button">Edit Team Members</button>
+                    <button type="button" class='button' @click="editTeamMembers">Edit Team Members</button>
                     <button type="submit" class="button save">Save</button>
                 </div>
             </form>
@@ -78,5 +78,9 @@
                 console.error('❌ Server error:', error)
             }
         }
+    }
+
+    function editTeamMembers() {
+        router.push({ name: 'edit_team_members', params: { id: route.params.id } })
     }
 </script>
