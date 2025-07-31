@@ -23,10 +23,17 @@
                 <div class="multiselect">
                     <Multiselect
                         v-model="form.assigned_to"
-                        :options="users"
+                        :searchable="true"
+                        :loading="isLoadingUsers"
+                        :options="searchResults"
+                        :internal-search="false"
+                        :clear-on-select="true"
+                        :close-on-select="true"
+                        :preserve-search="true"
+                        placeholder="Assign to user"
                         label="name"
                         track-by="id"
-                        placeholder="Assign to user"
+                        @search-change="searchUsers"
                     />
                     <Multiselect
                         v-model="form.team"
@@ -47,16 +54,16 @@
     </main>
 </template>
 <script setup>
-    import { reactive, ref, onMounted } from 'vue'
+    import { reactive, ref, onMounted, watch } from 'vue'
     import { useRouter } from 'vue-router'
-    import { useAuthStore } from '../../stores/auth'
     import { usePopup  } from '../../stores/popup'
     import axios from 'axios'
     import Multiselect from 'vue-multiselect'
     import 'vue-multiselect/dist/vue-multiselect.min.css'
 
     const router = useRouter()
-    const authStore = useAuthStore()
+    const searchResults = ref([])
+    const isLoadingUsers = ref(false)
 
     const form = reactive({
         title: '',
@@ -65,7 +72,6 @@
         assigned_to: '',
         team: '',
     })
-    const users = ref([])
     const teams = ref([])
 
     const { show } = usePopup()
@@ -78,10 +84,6 @@
                 name: team.name
             }))
 
-            users.value = res.data.users.map(user => ({
-                ...user,
-                name: `${user.first_name} ${user.last_name}`
-            }))
         } catch (err) {
             console.error('❌ Error loading form data:', err)
         }
@@ -92,13 +94,82 @@
         errors[field] = ''
     }
 
+    const searchUsers = async (query) => {
+        if (!query) {
+            searchResults.value = []
+            return
+        }
+
+        isLoadingUsers.value = true
+
+        try {
+            const res = await axios.post('/users/search', {
+                query: query
+            })
+            console.log('🔍 Search response:', res.data)
+
+            searchResults.value = res.data.map(user => ({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                team_id: user.team_id 
+            }))
+        } catch (err) {
+            console.error('❌ Error searching users:', err)
+            show('Failed to search users', 'error')
+        } finally {
+            isLoadingUsers.value = false
+        }
+    }
+
+    watch(() => form.assigned_to, async (user) => {
+        if (user && user.id) {
+            try {
+                const res = await axios.get(`/users/${user.id}`)
+                form.team = teams.value.find(t => t.id === res.data.team_id) || ''
+            } catch (err) {
+                console.error('❌ Failed to fetch user team', err)
+            }
+        }
+    })
+
+    watch(() => form.team, () => {
+        if (form.assigned_to) {
+            form.assigned_to = null
+        }
+    })
+
+    watch(() => form.assigned_to, (user) => {
+        if (user && typeof user === 'object' && user.team_id) {
+            form.team = teams.value.find(t => t.id === user.team_id) || ''
+        }
+
+        else if (user && typeof user === 'number') {
+            axios.get(`/users/${user}`).then(res => {
+                const u = res.data
+                const fullUser = {
+                    id: u.id,
+                    name: u.name,
+                    email: u.email,
+                    team_id: u.team_id
+                }
+                form.assigned_to = fullUser
+                if (!searchResults.value.find(x => x.id === u.id)) {
+                    searchResults.value.push(fullUser)
+                }
+            }).catch(err => {
+                console.error('❌ Could not load user by ID', err)
+            })
+        }
+    })
+
     const create_task = async () => {
         const formData = new FormData()
         formData.append('title', form.title)
         formData.append('description', form.description)
         formData.append('priority', form.priority)
         formData.append('assigned_to', form.assigned_to?.id || '')
-        formData.append('team', form.team.id)
+        formData.append('team', form.team?.id || '')
 
         try {
             await axios.post('/create_task', formData, {

@@ -6,10 +6,12 @@
             <div>
                 <table v-if="members.length" class="table">
                     <thead>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <tr v-for="member in members" :key="member.id">
