@@ -25,7 +25,6 @@
                         v-model="form.assigned_to"
                         :searchable="true"
                         :loading="isLoadingUsers"
-                        :options="searchResults"
                         :internal-search="false"
                         :clear-on-select="true"
                         :close-on-select="true"
@@ -33,6 +32,9 @@
                         placeholder="Assign to user"
                         label="name"
                         track-by="id"
+                        :options="inputQuery.length > 0 ? searchResults : []"
+                        :show-no-options="false"
+                        :show-no-results="inputQuery.length > 0"
                         @search-change="searchUsers"
                     />
                     <Multiselect
@@ -64,6 +66,7 @@
     const router = useRouter()
     const searchResults = ref([])
     const isLoadingUsers = ref(false)
+    const inputQuery = ref('')
 
     const form = reactive({
         title: '',
@@ -95,6 +98,8 @@
     }
 
     const searchUsers = async (query) => {
+        inputQuery.value = query
+
         if (!query) {
             searchResults.value = []
             return
@@ -103,63 +108,51 @@
         isLoadingUsers.value = true
 
         try {
-            const res = await axios.post('/users/search', {
-                query: query
-            })
-            console.log('🔍 Search response:', res.data)
-
-            searchResults.value = res.data.map(user => ({
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                team_id: user.team_id 
-            }))
+            const res = await axios.post('/users/search', { query })
+            searchResults.value = res.data
         } catch (err) {
-            console.error('❌ Error searching users:', err)
+            console.error('Error searching users:', err)
             show('Failed to search users', 'error')
         } finally {
             isLoadingUsers.value = false
         }
     }
 
-    watch(() => form.assigned_to, async (user) => {
-        if (user && user.id) {
-            try {
-                const res = await axios.get(`/users/${user.id}`)
-                form.team = teams.value.find(t => t.id === res.data.team_id) || ''
-            } catch (err) {
-                console.error('❌ Failed to fetch user team', err)
-            }
+    watch(() => form.assigned_to, (user) => {
+        if (!user) return
+
+        if (typeof user === 'number') {
+            axios.post('/users/search', { query: String(user) }).then(res => {
+                const found = res.data.find(u => u.id === user)
+                if (found) {
+                    if (!searchResults.value.find(x => x.id === found.id)) {
+                        searchResults.value.push(found)
+                    }
+                    form.assigned_to = found
+                }
+            }).catch(err => {
+                console.error('❌ Could not load user by ID!', err)
+            })
+
+            return
+        }
+
+        if (user.team_id) {
+            form.team = teams.value.find(t => t.id === user.team_id) || ''
+        }
+
+        const match = searchResults.value.find(x => x.id === user.id)
+        if (match && match !== user) {
+            form.assigned_to = match
         }
     })
 
     watch(() => form.team, () => {
-        if (form.assigned_to) {
+        if (
+            form.assigned_to &&
+            form.assigned_to.team_id !== form.team?.id
+        ) {
             form.assigned_to = null
-        }
-    })
-
-    watch(() => form.assigned_to, (user) => {
-        if (user && typeof user === 'object' && user.team_id) {
-            form.team = teams.value.find(t => t.id === user.team_id) || ''
-        }
-
-        else if (user && typeof user === 'number') {
-            axios.get(`/users/${user}`).then(res => {
-                const u = res.data
-                const fullUser = {
-                    id: u.id,
-                    name: u.name,
-                    email: u.email,
-                    team_id: u.team_id
-                }
-                form.assigned_to = fullUser
-                if (!searchResults.value.find(x => x.id === u.id)) {
-                    searchResults.value.push(fullUser)
-                }
-            }).catch(err => {
-                console.error('❌ Could not load user by ID', err)
-            })
         }
     })
 
@@ -196,3 +189,8 @@
         }
     }
 </script>
+<style>
+    .multiselect__select {
+        display: none !important;
+    }
+</style>
