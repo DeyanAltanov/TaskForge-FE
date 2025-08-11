@@ -84,3 +84,6 @@
         router.push({ name: 'edit_team_members', params: { id: route.params.id } })
     }
 </script>
+<style scoped>
+    @import '../../assets/styles/forms.css';
+</style>

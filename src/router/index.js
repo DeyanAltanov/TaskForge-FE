@@ -10,7 +10,8 @@ import Teams from '../components/team/AllTeams.vue'
 import CreateTeam from '../components/team/CreateTeam.vue'
 import EditTeam from '../components/team/EditTeam.vue'
 import EditTeamMembers from '../components/team/EditTeamMembers.vue'
-import Task from '../components/task/CreateTask.vue'
+import CreateTask from '../components/task/CreateTask.vue'
+import AllTasks from '../components/task/AllTasks.vue'
 
 const publicRoutes = [
   { path: '/', name: 'welcome', component: Welcome },
@@ -25,7 +26,8 @@ const privateRoutes = [
   { path: '/create_team', name: 'create_team', component: CreateTeam },
   { path: '/edit_team/:id', name: 'edit_team', component: EditTeam },
   { path: '/edit_team_members/:id', name: 'edit_team_members', component: EditTeamMembers },
-  { path: '/create_task', name: 'create_task', component: Task },
+  { path: '/create_task', name: 'create_task', component: CreateTask },
+  { path: '/all_tasks', name: 'all_tasks', component: AllTasks },
 ].map(route => ({ ...route, meta: { requiresAuth: true } }))
 
 const routes = [...publicRoutes, ...privateRoutes]

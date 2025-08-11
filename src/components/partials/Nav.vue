@@ -17,6 +17,7 @@
                     <div id="nav_toggle_tasks" v-if="showTasks">
                         <router-link to="/create_task" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Task</router-link>
                         <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - My Tasks</router-link>
+                        <router-link to="/all_tasks" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - All Tasks</router-link>
                     </div>
                     <div @click="toggleTeams" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
                         <span v-html="showTeams ? '&#9661;' : '&#9654;'"></span> Teams

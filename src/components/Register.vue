@@ -149,3 +149,6 @@
         }
     }
 </script>
+<style scoped>
+    @import '../assets/styles/forms.css';
+</style>

@@ -23,18 +23,20 @@
                 <div class="multiselect">
                     <Multiselect
                         v-model="form.assigned_to"
-                        :searchable="true"
+                        class="multiselect_user"
+                        :searchable="!!form.team"
+                        :disabled="!form.team"
                         :loading="isLoadingUsers"
                         :internal-search="false"
                         :clear-on-select="true"
                         :close-on-select="true"
                         :preserve-search="true"
-                        placeholder="Assign to user"
-                        label="name"
-                        track-by="id"
                         :options="inputQuery.length > 0 ? searchResults : []"
                         :show-no-options="false"
                         :show-no-results="inputQuery.length > 0"
+                        :placeholder="form.team ? 'Assign to user' : 'Select a team first'"
+                        label="name"
+                        track-by="id"
                         @search-change="searchUsers"
                     />
                     <Multiselect
@@ -88,7 +90,7 @@
             }))
 
         } catch (err) {
-            console.error('❌ Error loading form data:', err)
+            console.error('❌ Error loading form data: ', err)
         }
     })
     const errors = reactive({})
@@ -98,25 +100,23 @@
     }
 
     const searchUsers = async (query) => {
-        inputQuery.value = query
+        inputQuery.value = query;
+        if (!query || !form.team) { searchResults.value = []; return; }
 
-        if (!query) {
-            searchResults.value = []
-            return
-        }
-
-        isLoadingUsers.value = true
-
+        isLoadingUsers.value = true;
         try {
-            const res = await axios.post('/users/search', { query })
-            searchResults.value = res.data
+            const res = await axios.post('/users/search', {
+                query,
+                team_id: form.team.id
+            });
+            searchResults.value = res.data;
         } catch (err) {
-            console.error('Error searching users:', err)
-            show('Failed to search users', 'error')
+            console.error('Error searching users: ', err);
+            show('Failed to search users.', 'error');
         } finally {
-            isLoadingUsers.value = false
+            isLoadingUsers.value = false;
         }
-    }
+    };
 
     watch(() => form.assigned_to, (user) => {
         if (!user) return
@@ -137,10 +137,6 @@
             return
         }
 
-        if (user.team_id) {
-            form.team = teams.value.find(t => t.id === user.team_id) || ''
-        }
-
         const match = searchResults.value.find(x => x.id === user.id)
         if (match && match !== user) {
             form.assigned_to = match
@@ -148,13 +144,22 @@
     })
 
     watch(() => form.team, () => {
-        if (
-            form.assigned_to &&
-            form.assigned_to.team_id !== form.team?.id
-        ) {
-            form.assigned_to = null
+        if (!form.team) {
+            form.assigned_to = null;
+            return;
         }
-    })
+        if (!form.assigned_to) return;
+
+        const tId = form.team.id;
+        const u = form.assigned_to;
+
+        const inTeam =
+            (Array.isArray(u.team_ids) && u.team_ids.includes(tId)) ||
+            (Array.isArray(u.teams) && u.teams.some(t => t.id === tId)) ||
+            (u.team_id && u.team_id === tId);
+
+        if (!inTeam) form.assigned_to = null;
+    });
 
     const create_task = async () => {
         const formData = new FormData()
@@ -189,8 +194,6 @@
         }
     }
 </script>
-<style>
-    .multiselect__select {
-        display: none !important;
-    }
+<style scoped>
+    @import '../../assets/styles/forms.css';
 </style>
