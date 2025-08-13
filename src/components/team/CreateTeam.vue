@@ -66,7 +66,7 @@
                 const firstError = error.response.data.errors[firstField][0]
                 show(firstError, 'error')
             } else {
-                console.error('❌ Server error:', error)
+                console.error('❌ Server error: ', error)
             }
         }
     }

@@ -36,7 +36,7 @@
             teams.value = response.data.teams
             users.value = response.data.users
         } catch (err) {
-            console.error('❌ Error loading data:', err)
+            console.error('❌ Error loading data: ', err)
         }
     })
 

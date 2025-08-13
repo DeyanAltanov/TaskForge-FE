@@ -1,6 +1,6 @@
 <template>
     <main>
-        <h1 class="page_title">All Tasks</h1>
+        <h1 class="page_title">My Tasks</h1>
 
         <table class="task-table">
             <thead>
@@ -45,11 +45,14 @@
 
 <script setup>
     import { reactive, ref, onMounted } from 'vue'
+    import { useAuthStore } from '../../stores/auth'
     import axios from 'axios'
 
     const tasks = ref([])
     const currentPage = ref(1)
     const lastPage = ref(1)
+    const auth = useAuthStore()
+    const userId = auth.user.id
 
     const sort = reactive({ by: null, dir: 'asc' })
 
@@ -60,7 +63,7 @@
             params.sort_dir = sort.dir
         }
 
-        const { data } = await axios.get('/tasks', { params })
+        const { data } = await axios.get('/tasks/' + userId, { params })
         tasks.value = data.data
         currentPage.value = data.current_page
         lastPage.value = data.last_page

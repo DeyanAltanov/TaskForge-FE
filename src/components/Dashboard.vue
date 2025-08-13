@@ -13,7 +13,7 @@
         try {
             await axios.get('/dashboard')
         } catch (error) {
-            console.error('Failed to load dashboard data:', error)
+            console.error('Failed to load dashboard data: ', error)
         }
     })
 </script>

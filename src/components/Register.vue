@@ -144,7 +144,7 @@
             if (error.response?.data?.errors) {
                 Object.assign(errors, error.response.data.errors)
             } else {
-                console.error('Registration error:', error)
+                console.error('Registration error: ', error)
             }
         }
     }

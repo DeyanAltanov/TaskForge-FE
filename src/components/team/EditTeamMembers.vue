@@ -73,7 +73,7 @@
             teamName.value = response.data.team_name
             members.value = response.data.members
         } catch (err) {
-            console.error('❌ Error loading team members:', err)
+            console.error('❌ Error loading team members: ', err)
         }
     })
 
@@ -91,7 +91,7 @@
             searchResult.value = result.data
             searchPerformed.value = true
         } catch (err){
-            console.error('❌ Error searching users:', err)
+            console.error('❌ Error searching users: ', err)
             show('Failed to search users', 'error')
         }
     }, 300)
@@ -113,15 +113,15 @@
             searchResult.value = []
             searchPerformed.value = false
 
-            show('User added to team', 'success')
+            show('User added to team.', 'success')
         } catch (err) {
             if (err.response?.status === 422 && err.response.data.errors) {
                 const firstField = Object.keys(err.response.data.errors)[0]
                 const firstError = err.response.data.errors[firstField][0]
                 show(firstError, 'error')
             } else {
-                show('Failed to add user', 'error')
-                console.error('❌ Failed to add user:', err)
+                show('Failed to add user.', 'error')
+                console.error('❌ Failed to add user: ', err)
             }
         }
     }
@@ -132,8 +132,8 @@
             members.value = members.value.filter(m => m.id !== userId)
             show('User removed from team.', 'success')
         } catch (err) {
-            show('Failed to remove member', 'error')
-            console.error('❌ Failed to remove member:', err)
+            show('Failed to remove member.', 'error')
+            console.error('❌ Failed to remove member: ', err)
         }
     }
 </script>

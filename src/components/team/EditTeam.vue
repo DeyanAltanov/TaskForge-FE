@@ -49,7 +49,7 @@
             form.value.name = res.data.name
             form.value.description = res.data.description
         } catch (err) {
-            console.error('❌ Error loading team:', err)
+            console.error('❌ Error loading team: ', err)
         }
     })
 
@@ -75,7 +75,7 @@
                 const firstError = error.response.data.errors[firstField][0]
                 show(firstError, 'error')
             } else {
-                console.error('❌ Server error:', error)
+                console.error('❌ Server error: ', error)
             }
         }
     }

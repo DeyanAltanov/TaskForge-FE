@@ -14,9 +14,9 @@
                 <div @click="toggleTasks" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
                     <span v-html="showTasks ? '&#9661;' : '&#9654;'"></span> Tasks
                 </div>
-                    <div id="nav_toggle_tasks" v-if="showTasks">
+                    <div id="nav_toggle_tasks" style="z-index: 999;" v-if="showTasks">
                         <router-link to="/create_task" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Task</router-link>
-                        <router-link to="" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - My Tasks</router-link>
+                        <router-link to="/my_tasks" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - My Tasks</router-link>
                         <router-link to="/all_tasks" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - All Tasks</router-link>
                     </div>
                     <div @click="toggleTeams" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
@@ -88,7 +88,7 @@
         try {
             await axios.post('/logout')
         } catch (error) {
-            console.error('Logout failed:', error)
+            console.error('Logout failed: ', error)
         } finally {
             authStore.clearUser()
             router.push({ name: 'welcome' })

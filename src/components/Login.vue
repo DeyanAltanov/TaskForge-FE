@@ -53,7 +53,7 @@
             } else if (error.response?.data?.message) {
                 errors.password = error.response.data.message
             } else {
-                console.error('Login error:', error)
+                console.error('Login error: ', error)
                 errors.password = 'Unexpected error'
             }
         }

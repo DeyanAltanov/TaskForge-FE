@@ -2,11 +2,13 @@
     max-width: 400px;
     margin: 50px auto;
 }
+
 label {
     display: block;
     margin-bottom: 0.3rem;
     font-weight: 500;
 }
+
 input, select, textarea {
     width: 100%;
     padding: 0.5rem;
@@ -100,4 +102,13 @@ button:disabled {
     font-size: 0.8em; 
     opacity: .7; 
     margin-left: 4px; 
+}
+
+.task_title {
+    text-decoration: none;
+    color: #7A73D1;
+}
+
+.task_title:hover {
+    color: #211C84;
 }
