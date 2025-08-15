@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
+html, body, #app {
+    height: 100%;
+}
+
 #nav {
     color: white;
     background-color: #211C84;
@@ -37,7 +41,25 @@ body {
 }
 
 main {
-    margin-top: 130px;
+    margin: 80px 0;
+}
+
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-footer {
+    padding: 18px 16px;
+    background: #211C84;
+    color: #B5ABD5;
+    text-align: right;
+    font-size: 14px;
+}
+
+.content {
+    flex: 1 0 auto;
 }
 
 .logo {
@@ -107,6 +129,11 @@ main {
 
 #profile_card_buttons {
     margin: 0 auto;
+}
+
+.icon_thumbnail {
+    width: 25px;
+    height: 25px;
 }
 
 .button {

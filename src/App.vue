@@ -1,7 +1,10 @@
 <template>
-  <div v-if="authStore.checked">
+  <div v-if="authStore.checked" class="layout">
     <Nav />
-    <router-view />
+    <main class="content">
+      <router-view />
+    </main>
+    <Footer />
   </div>
   <Popup v-if="popup.text" :text="popup.text" :type="popup.type" />
 </template>
@@ -13,6 +16,7 @@
   import { usePopup } from './stores/popup'
   import Nav from './components/partials/Nav.vue'
   import Popup from './components/partials/Popup.vue'
+  import Footer from './components/partials/Footer.vue'
 
   const authStore = useAuthStore()
   const router = useRouter()

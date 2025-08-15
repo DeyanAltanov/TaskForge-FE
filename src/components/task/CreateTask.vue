@@ -14,6 +14,18 @@
                     <input v-model="form.description" @input="clearError('description')" type="text" />
                     <p v-if="errors.description" class="error">{{ errors.description[0] }}</p>
                 </div>
+                <div class="form-field">
+                    <label>Attachments</label>
+
+                    <input type="file" multiple @change="onFileChange" />
+
+                    <ul v-if="files.length" class="file-list">
+                        <li v-for="(f, i) in files" :key="f._key">
+                        {{ f.name }} ({{ Math.ceil(f.size/1024) }} KB)
+                        <button type="button" @click="removeFile(i)">×</button>
+                        </li>
+                    </ul>
+                </div>
                 <select v-model="form.priority" required>
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -78,6 +90,7 @@
         team: '',
     })
     const teams = ref([])
+    const files = ref([])
 
     const { show } = usePopup()
 
@@ -161,6 +174,22 @@
         if (!inTeam) form.assigned_to = null;
     });
 
+    function onFileChange(e) {
+        const picked = Array.from(e.target.files || [])
+        picked.forEach(f => {
+            const exists = files.value.some(x => x.name === f.name && x.size === f.size && x.lastModified === f.lastModified)
+            if (!exists) {
+                f._key = `${f.name}-${f.size}-${f.lastModified}-${Math.random()}`
+                files.value.push(f)
+            }
+        })
+        e.target.value = ''
+    }
+
+    function removeFile(index) {
+        files.value.splice(index, 1)
+    }
+
     const create_task = async () => {
         const formData = new FormData()
         formData.append('title', form.title)
@@ -168,6 +197,7 @@
         formData.append('priority', form.priority)
         formData.append('assigned_to', form.assigned_to?.id || '')
         formData.append('team', form.team?.id || '')
+        files.value.forEach(f => formData.append('files[]', f))
 
         try {
             await axios.post('/create_task', formData, {
@@ -196,4 +226,9 @@
 </script>
 <style scoped>
     @import '../../assets/styles/forms.css';
+</style>
+<style>
+    .multiselect_user .multiselect__select {
+        display: none !important;
+    }
 </style>

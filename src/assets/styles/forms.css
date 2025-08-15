@@ -59,7 +59,7 @@ textarea {
     color: white !important;
 }
 
-.multiselect_user > .multiselect__select {
+.multiselect_user .multiselect__select {
     display: none !important;
 }
 
