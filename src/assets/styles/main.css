@@ -22,6 +22,7 @@ html, body, #app {
     height: 52px;
     display: block;
     border-radius: 25px !important;
+    cursor: pointer;
 }
 
 #nav_profile_img_btn{
@@ -77,6 +78,18 @@ main {
     filter: drop-shadow(0 0 2em #42b883aa);
 }
 
+#nav-menu {
+    display: flex;
+    justify-content: space-between;
+    width: 10%;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    color: #B5A8D5 !important;
+}
+
 .nav_dropdown_submenu {
     text-decoration: none;
     color: #B5A8D5;
@@ -85,12 +98,20 @@ main {
     font-size: 17px;
 }
 
+.nav-link:hover, .nav_dropdown_submenu:hover {
+    color: #c9c1de !important;
+}
+
 .nav_dropdown_submenu_sub {
     text-decoration: none;
     background-color: #B5A8D5;
     color: #211C84;
     padding: 15px;
     font-size: 17px;
+}
+
+.nav_dropdown_submenu_sub:hover {
+    color: #4D55CC !important;
 }
 
 #nav_dropdown {

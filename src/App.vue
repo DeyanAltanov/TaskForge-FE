@@ -16,6 +16,7 @@
   import { usePopup } from './stores/popup'
   import Nav from './components/partials/Nav.vue'
   import Popup from './components/partials/Popup.vue'
+  import ConfirmDialog from './components/partials/ConfirmDialog.vue'
   import Footer from './components/partials/Footer.vue'
 
   const authStore = useAuthStore()

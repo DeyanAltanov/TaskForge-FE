@@ -3,6 +3,10 @@
         <router-link :to="authStore.user ? '/dashboard' : '/'">
             <img id='nav-logo' src="/nav.png" />
         </router-link>
+        <div id="nav-menu">
+            <router-link to="" class="nav-link">Statistics</router-link>
+            <router-link to="" class="nav-link">FAQ</router-link>
+        </div>
 
         <div v-if="authStore.user" class="relative" ref="dropdownWrapper">
             <button @click="toggleDropdown" id='nav_profile_img_btn' class="flex items-center gap-2 focus:outline-none">
@@ -12,7 +16,7 @@
             <div v-if="dropdownOpen" id="nav_dropdown" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10">
                 <router-link to="/profile" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100">Profile</router-link>
                 <div @click="toggleTasks" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
-                    <span v-html="showTasks ? '&#9661;' : '&#9654;'"></span> Tasks
+                    <span>{{ showTasks ? '&#9661;' : '▸' }}</span> Tasks
                 </div>
                     <div id="nav_toggle_tasks" style="z-index: 999;" v-if="showTasks">
                         <router-link to="/create_task" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Task</router-link>
@@ -20,7 +24,7 @@
                         <router-link to="/all_tasks" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - All Tasks</router-link>
                     </div>
                     <div @click="toggleTeams" class="nav_dropdown_submenu block px-4 py-2 hover:bg-gray-100" style="cursor: pointer;">
-                        <span v-html="showTeams ? '&#9661;' : '&#9654;'"></span> Teams
+                        <span>{{ showTeams ? '▾' : '▸' }}</span> Teams
                     </div>
                     <div id="nav_toggle_teams" v-if="showTeams">
                         <router-link to="/create_team" class="nav_dropdown_submenu_sub block px-6 py-2 hover:bg-gray-100"> - Create Team</router-link>

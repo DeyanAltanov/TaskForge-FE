@@ -3,10 +3,12 @@
         <div>
             <div id="task_header">
                 <section id="task_header_title_status_btns">
-                    <div class="task_header_title_status_btns_inner_div">
-                        <p v-if="task?.status" id="status">{{ task.status }}</p>
-                        <h1 class="page_title">{{ task?.title }}</h1>
-                    </div>
+                    <select id="status"
+                            v-model="edit.status"
+                            @change="confirmAndUpdate('status', task.status, edit.status, { status: edit.status })">
+                        <option v-for="s in STATUS_OPTIONS" :key="s" :value="s">{{ s }}</option>
+                    </select>
+                    <h1 class="page_title">{{ task?.title }}</h1>
                     <div class="task_header_title_status_btns_inner_div">
                         <button class="button">Edit</button>
                     </div>
@@ -14,14 +16,54 @@
                 <section id="task_header_team_assigned-to_created-at">
                     <div class="task_header_team_assigned-to_created-at_inner_div">
                         <img src="/icons/team.jpg" class="icon_thumbnail">
-                        <div v-if="task?.team" id="team">{{ task.team.name }}</div>
+                        <select v-model.number="edit.team_id" @change="onTeamChanged">
+                            <option v-for="t in teams" :key="t.id" :value="t.id">{{ t.name }}</option>
+                        </select>
                     </div>
+
                     <div class="task_header_team_assigned-to_created-at_inner_div">
                         <img src="/icons/person.jpg" class="icon_thumbnail">
-                        <div id="assigned_to">{{ task?.assigned_to ? `${task.assigned_to.first_name} ${task.assigned_to.last_name}` : 'unassigned' }}</div>
+
+                        <div id="assigned_to">
+                            {{ task?.assigned_to ? `${task.assigned_to.first_name} ${task.assigned_to.last_name}` : 'unassigned' }}
+                        </div>
+
+                        <img
+                            :src="task?.assigned_to ? ICONS.change_user : ICONS.assign_to"
+                            class="icon_thumbnail icon_assign_to"
+                            :title="task?.assigned_to ? 'Change assignee' : 'Assign to user'"
+                            @click="openAssignModal"
+                        />
                     </div>
+                    <teleport to="body">
+                        <div v-if="showAssignModal" class="modal_overlay" @click.self="closeAssignModal">
+                            <div class="modal_card" role="dialog" aria-modal="true">
+                                <h3 class="modal_title">Assign to user</h3>
 
+                                <Multiselect
+                                    v-model="candidateUser"
+                                    class="multiselect_user"
+                                    :searchable="!!(edit.team_id ?? task?.team?.id)"
+                                    :disabled="!(edit.team_id ?? task?.team?.id)"
+                                    :loading="isLoadingUsers"
+                                    :internal-search="false"
+                                    :options="inputQuery.length > 0 ? searchResults : []"
+                                    :show-no-options="false"
+                                    :show-no-results="inputQuery.length > 0"
+                                    label="name"
+                                    track-by="id"
+                                    :custom-label="userLabel"
+                                    placeholder="Type to search…"
+                                    @search-change="searchUsers"
+                                />
 
+                                <div class="modal_actions">
+                                    <button type="button" class="button" @click="closeAssignModal">Cancel</button>
+                                    <button type="button" class="button btn_ok" :disabled="!candidateUser" @click="confirmAssign">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </teleport>
                 </section>
             </div>
             <div id="task_data">
@@ -43,10 +85,14 @@
                         <p>{{ task.created_by.first_name }} {{ task.created_by.last_name }}</p>
                     </div>
                 </div>
-                <div v-if="task?.priority">
+                <div>
                     <p class="label">Priority</p>
-                    <p id="task_data_priority">{{ task.priority }}</p>
-                </div> 
+                    <select id="task_data_priority"
+                            v-model="edit.priority"
+                            @change="confirmAndUpdate('priority', task.priority, edit.priority, { priority: edit.priority })">
+                        <option v-for="p in PRIORITY_OPTIONS" :key="p" :value="p">{{ p }}</option>
+                    </select>
+                </div>
             </div>
             <div id="task_details">
                 <div v-if="task?.description">
@@ -124,6 +170,8 @@
     import { ref, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
     import axios from 'axios'
+    import Multiselect from 'vue-multiselect'
+    import 'vue-multiselect/dist/vue-multiselect.min.css'
 
     const showAttachments = ref(false)
     const route = useRoute()
@@ -140,55 +188,42 @@
         docx: '/icons/docx.jpg',
         xlsx: '/icons/xlsx.jpg',
         xls: '/icons/xlsx.jpg',
+        change_user: '/icons/change_user.jpg',
+        assign_to: '/icons/assign_to.jpg'
     }
-
-    onMounted(async () => {
-        await loadTask()
-        const status = task.value?.status?.trim().toLowerCase()
-        const status_element = document.getElementById('status')
-
-        switch (status) {
-            case 'unassigned':
-                status_element.classList.add('status-unassigned')
-                break
-            case 'pending':
-                status_element.classList.add('status-pending')
-                break
-            case 'in_progress':
-                status_element.classList.add('status-in_progress')
-                break
-            case 'blocked':
-                status_element.classList.add('status-blocked')
-                break
-            case 'for_review':
-                status_element.classList.add('status-for_review')
-                break
-            case 'completed':
-                status_element.classList.add('status-completed')
-                break
-            default:
-                status_element.classList.add('status-default')
-        }
-
-        const priority = task.value?.priority?.trim().toLowerCase()
-        const priority_element = document.getElementById('task_data_priority')
-        switch (priority) {
-            case 'low':
-                priority_element.classList.add('priority-low')
-                break
-            case 'medium':
-                priority_element.classList.add('priority-medium')
-                break
-            case 'high':
-                priority_element.classList.add('priority-high')
-                break
-            case 'critical':
-                priority_element.classList.add('priority-critical')
-                break
-            default:
-                priority_element.classList.add('priority-default')
-        }
+    const STATUS_OPTIONS   = ['unassigned','pending','in_progress','blocked','for_review','completed']
+    const PRIORITY_OPTIONS = ['low','medium','high','critical']
+    const teams = ref([])
+    const isLoadingUsers = ref(false)
+    const searchResults = ref([])
+    const inputQuery = ref('')
+    const edit = ref({
+        status: 'unassigned',
+        team_id: null,
+        assigned_user: null,
+        priority: 'medium',
     })
+    const searchUsers = async (query) => {
+        inputQuery.value = query
+        const teamId = edit.value.team_id ?? task.value?.team?.id ?? null
+        if (!query || !teamId) { searchResults.value = []; return }
+
+        isLoadingUsers.value = true
+        try {
+            const res = await axios.post('/users/search', { query, team_id: teamId })
+            searchResults.value = (res.data || []).map(u => ({
+                ...u,
+                name: u.name ?? `${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()
+            }))
+        } catch (err) {
+            console.error('Error searching users: ', err)
+            searchResults.value = []
+        } finally {
+            isLoadingUsers.value = false
+        }
+    }
+    const showAssignModal = ref(false)
+    const candidateUser   = ref(null)
 
     function ext(name) {
         const i = String(name).lastIndexOf('.')
@@ -208,14 +243,43 @@
 
     function fullName(u) { return `${u?.first_name ?? ''} ${u?.last_name ?? ''}`.trim() }
 
-    async function loadTask() {
-        const url = `/task/${route.params.id}`
-        const { data } = await axios.get(url)
-        task.value = data
-    }
-
     function isZip(name) {
         return /\.zip$/i.test(name)
+    }
+
+    function openAssignModal() {
+        candidateUser.value = null
+        searchResults.value = []
+        inputQuery.value = ''
+        showAssignModal.value = true
+        document.body.style.overflow = 'hidden'
+    }
+
+    function closeAssignModal() {
+        showAssignModal.value = false
+        document.body.style.overflow = ''
+    }
+
+    function confirmAssign() {
+        if (!candidateUser.value) return
+
+        const toLabel = userLabel(candidateUser.value)
+        const fromLabel = task.value?.assigned_to ? userLabel(task.value.assigned_to) : 'unassigned'
+
+        const msg = `Assign task to "${toLabel}"?\n(Current: ${fromLabel})`
+        if (!window.confirm(msg)) return
+
+        axios.patch(`/task/${task.value.id}`, { assigned_to: candidateUser.value.id })
+            .then(({ data }) => {
+                task.value = data
+                syncEditFromTask()
+                applyStatusClass()
+                applyPriorityClass()
+                closeAssignModal()
+            })
+            .catch(e => {
+                console.error('Update failed.', e.response?.data || e.message)
+            })
     }
 
     function formatSize(bytes) {
@@ -224,6 +288,97 @@
         let i = 0, n = Number(bytes)
         while (n >= 1024 && i < units.length-1) { n /= 1024; i++ }
         return `${n.toFixed(n < 10 && i > 0 ? 1 : 0)} ${units[i]}`
+    }
+
+    function userLabel(u) {
+        if (!u) return 'unassigned'
+        const n = u.name ?? `${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()
+        return n || (u.email ?? `#${u.id}`)
+    }
+
+    function syncEditFromTask() {
+        edit.value.status   = task.value?.status ?? 'unassigned'
+        edit.value.team_id  = task.value?.team?.id ?? null
+        edit.value.priority = task.value?.priority ?? 'medium'
+        edit.value.assigned_user = task.value?.assigned_to
+            ? {
+                ...task.value.assigned_to,
+                name: `${task.value.assigned_to.first_name ?? ''} ${task.value.assigned_to.last_name ?? ''}`.trim()
+            }
+            : null
+    }
+
+    function applyStatusClass() {
+        const el = document.getElementById('status')
+        if (!el) return
+        el.className = ''
+        const s = (task.value?.status || '').trim().toLowerCase()
+        el.classList.add(
+            s === 'unassigned' ? 'status-unassigned' :
+            s === 'pending'    ? 'status-pending'    :
+            s === 'in_progress'? 'status-in_progress':
+            s === 'blocked'    ? 'status-blocked'    :
+            s === 'for_review' ? 'status-for_review' :
+                                'status-default'
+        )
+    }
+
+    function applyPriorityClass() {
+        const el = document.getElementById('task_data_priority')
+        if (!el) return
+        el.className = ''
+        const p = (task.value?.priority || '').trim().toLowerCase()
+        el.classList.add(
+            p === 'low'      ? 'priority-low' :
+            p === 'medium'   ? 'priority-medium' :
+            p === 'high'     ? 'priority-high' :
+            p === 'critical' ? 'priority-critical' :
+                            'priority-default'
+        )
+    }
+
+    async function onTeamChanged() {
+        const teamName = teams.value.find(t => t.id === edit.value.team_id)?.name ?? ''
+        await confirmAndUpdate('team', task.value?.team?.name ?? '(none)', teamName, {
+            team: edit.value.team_id,
+            assigned_to: null,
+        })
+        edit.value.assigned_user = null
+        searchResults.value = []
+        inputQuery.value = ''
+    }
+
+    async function loadTask() {
+        const url = `/task/${route.params.id}`
+        const { data } = await axios.get(url)
+        task.value = data
+    }
+
+    async function loadFormData() {
+        const { data } = await axios.get('/tasks/form-data')
+        teams.value = (data?.teams ?? []).map(t => ({ id: t.id, name: t.name }))
+    }
+
+    async function confirmAndUpdate(kind, fromVal, toVal, payload) {
+        const msg = kind === 'status'   ? `Change status from "${fromVal}" to "${toVal}"?`
+                : kind === 'priority' ? `Change priority from "${fromVal}" to "${toVal}"?`
+                : kind === 'team'     ? `Move task to team "${toVal}"?\nAssigned user will be cleared.`
+                : 'Apply changes?'
+
+        if (!window.confirm(msg)) { syncEditFromTask(); return }
+
+        try {
+            const { data } = await axios.patch(`/task/${task.value.id}`, payload)
+            task.value = data
+            syncEditFromTask()
+            applyStatusClass()
+            applyPriorityClass()
+            return data
+        } catch (e) {
+            console.error('Update failed', e.response?.data || e.message)
+            syncEditFromTask()
+            return Promise.reject(e)
+        }
     }
 
     async function loadComments() {
@@ -262,7 +417,13 @@
     onMounted(async () => {
         try {
             await loadTask()
-            await loadComments()
+            await Promise.all([
+                loadComments(),
+                loadFormData(),
+            ])
+            syncEditFromTask()
+            applyStatusClass()
+            applyPriorityClass()
         } catch (e) {
             console.error('API error: ', e.response?.status, e.response?.data || e.message)
         }
