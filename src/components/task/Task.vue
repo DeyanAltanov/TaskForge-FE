@@ -164,6 +164,14 @@
                 </form>
             </div>
         </div>
+        <ConfirmDialog
+            v-model="showConfirm"
+            :title="confirmCfg.title"
+            :message="confirmCfg.message"
+            :danger="confirmCfg.danger"
+            @ok="confirmOk && confirmOk()"
+            @cancel="confirmCancel && confirmCancel()"
+        />
     </main>
 </template>
 <script setup>
@@ -172,6 +180,7 @@
     import axios from 'axios'
     import Multiselect from 'vue-multiselect'
     import 'vue-multiselect/dist/vue-multiselect.min.css'
+    import ConfirmDialog from '../partials/ConfirmDialog.vue'
 
     const showAttachments = ref(false)
     const route = useRoute()
@@ -224,6 +233,8 @@
     }
     const showAssignModal = ref(false)
     const candidateUser   = ref(null)
+    const showConfirm = ref(false)
+    const confirmCfg  = ref({ title: '', message: '', danger: false })
 
     function ext(name) {
         const i = String(name).lastIndexOf('.')
@@ -260,27 +271,41 @@
         document.body.style.overflow = ''
     }
 
-    function confirmAssign() {
+    async function confirmAssign() {
         if (!candidateUser.value) return
 
         const toLabel = userLabel(candidateUser.value)
         const fromLabel = task.value?.assigned_to ? userLabel(task.value.assigned_to) : 'unassigned'
-
         const msg = `Assign task to "${toLabel}"?\n(Current: ${fromLabel})`
-        if (!window.confirm(msg)) return
 
-        axios.patch(`/task/${task.value.id}`, { assigned_to: candidateUser.value.id })
-            .then(({ data }) => {
-                task.value = data
-                syncEditFromTask()
-                applyStatusClass()
-                applyPriorityClass()
-                closeAssignModal()
+        const ok = await ask(msg, 'Are you sure?')
+        if (!ok) return
+
+        try {
+            const { data } = await axios.patch(`/task/${task.value.id}`, {
+            assigned_to: candidateUser.value.id
             })
-            .catch(e => {
-                console.error('Update failed.', e.response?.data || e.message)
-            })
+
+            task.value = data
+            syncEditFromTask()
+            applyStatusClass()
+            applyPriorityClass()
+            closeAssignModal()
+        } catch (e) {
+            console.error('Update failed.', e.response?.data || e.message)
+        }
     }
+
+    function ask(msg, title='Are you sure?', danger=false){
+        confirmCfg.value = { title, message: msg, danger }
+        showConfirm.value = true
+        return new Promise(resolve => {
+            const onOk = () => resolve(true)
+            const onCancel = () => resolve(false)
+            confirmOk = onOk; confirmCancel = onCancel
+        })
+    }
+    let confirmOk = null, confirmCancel = null
 
     function formatSize(bytes) {
         if (bytes == null) return ''
@@ -360,12 +385,17 @@
     }
 
     async function confirmAndUpdate(kind, fromVal, toVal, payload) {
-        const msg = kind === 'status'   ? `Change status from "${fromVal}" to "${toVal}"?`
-                : kind === 'priority' ? `Change priority from "${fromVal}" to "${toVal}"?`
-                : kind === 'team'     ? `Move task to team "${toVal}"?\nAssigned user will be cleared.`
-                : 'Apply changes?'
+        const msg =
+            kind === 'status'
+            ? `Change status from "${fromVal}" to "${toVal}"?`
+            : kind === 'priority'
+            ? `Change priority from "${fromVal}" to "${toVal}"?`
+            : kind === 'team'
+            ? `Move task to team "${toVal}"?\nAssigned user will be cleared.`
+            : 'Apply changes?'
 
-        if (!window.confirm(msg)) { syncEditFromTask(); return }
+        const ok = await ask(msg, 'Are you sure?')
+        if (!ok) { syncEditFromTask(); return }
 
         try {
             const { data } = await axios.patch(`/task/${task.value.id}`, payload)

@@ -15,6 +15,8 @@
   </template>
   
   <script setup>
+  import { onMounted, onBeforeUnmount } from 'vue'
+
     const props = defineProps({
         modelValue: { type: Boolean, default: false },
         title:      { type: String,  default: 'Are you sure?' },
