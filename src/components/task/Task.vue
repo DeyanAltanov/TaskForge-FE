@@ -175,12 +175,16 @@
     </main>
 </template>
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, onBeforeUnmount } from 'vue'
     import { useRoute } from 'vue-router'
     import axios from 'axios'
     import Multiselect from 'vue-multiselect'
     import 'vue-multiselect/dist/vue-multiselect.min.css'
     import ConfirmDialog from '../partials/ConfirmDialog.vue'
+
+    onBeforeUnmount(() => {
+        document.body.style.overflow = ''
+    })
 
     const showAttachments = ref(false)
     const route = useRoute()
@@ -297,12 +301,30 @@
     }
 
     function ask(msg, title='Are you sure?', danger=false){
+        if (showConfirm.value) {
+            confirmCancel?.()
+            confirmOk = null
+            confirmCancel = null
+            showConfirm.value = false
+        }
+
         confirmCfg.value = { title, message: msg, danger }
         showConfirm.value = true
+
         return new Promise(resolve => {
-            const onOk = () => resolve(true)
-            const onCancel = () => resolve(false)
-            confirmOk = onOk; confirmCancel = onCancel
+            confirmOk = () => {
+                showConfirm.value = false
+                const r = resolve(true)
+                confirmOk = null; confirmCancel = null
+                return r
+            }
+
+            confirmCancel = () => {
+                showConfirm.value = false
+                const r = resolve(false)
+                confirmOk = null; confirmCancel = null
+                return r
+            }
         })
     }
     let confirmOk = null, confirmCancel = null

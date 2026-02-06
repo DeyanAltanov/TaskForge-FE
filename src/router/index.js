@@ -7,6 +7,7 @@ import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue'
 import Profile from '../components/user/Profile.vue'
 import Teams from '../components/team/AllTeams.vue'
+import MyTeams from '../components/team/MyTeams.vue'
 import CreateTeam from '../components/team/CreateTeam.vue'
 import EditTeam from '../components/team/EditTeam.vue'
 import EditTeamMembers from '../components/team/EditTeamMembers.vue'
@@ -25,6 +26,7 @@ const privateRoutes = [
   { path: '/dashboard', name: 'dashboard', component: Dashboard },
   { path: '/profile', name: 'profile', component: Profile },
   { path: '/all_teams', name: 'all_teams', component: Teams },
+  { path: '/my_teams', name: 'my_teams', component: MyTeams },
   { path: '/create_team', name: 'create_team', component: CreateTeam },
   { path: '/edit_team/:id', name: 'edit_team', component: EditTeam },
   { path: '/edit_team_members/:id', name: 'edit_team_members', component: EditTeamMembers },
