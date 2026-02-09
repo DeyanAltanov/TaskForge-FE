@@ -13,7 +13,7 @@
     </div>
   </teleport>
 </template>
-  
+
 <script setup>
   import { onMounted, onBeforeUnmount } from 'vue'
 

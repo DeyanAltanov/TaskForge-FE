@@ -15,6 +15,7 @@ html, body, #app {
     width: 100%;
     box-sizing: border-box;
     top: 0 !important;
+    z-index: 9999;
 }
 
 #nav_profile_img {
