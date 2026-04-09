@@ -1,20 +1,75 @@
-#task_header_title_status_btns, 
 #task_header_team_assigned-to_created-at, 
-.task_header_title_status_btns_inner_div, 
-.task_header_team_assigned-to_created-at_inner_div {
+.task_header_title_status_btns_inner_div,
+.task_header_team_inner_div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-#status {
+#task_header_title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.task_header_team_inner_div {
+    gap: 10px;
+}
+
+.task_header_assigned-to_inner_div {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.task_header_assigned-to_inner_inner_div {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgb(218, 213, 213);
+    padding-right: 10px;
+}
+
+.icon_thumbnail {
+    display: block;
+}
+
+.icon_assign_to {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#status {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     margin-right: 25px;
-    padding: 15px;
-    border-radius: 25px;
+    padding: 12px 36px 12px 16px;
+    border-radius: 12px;
     text-transform: uppercase;
     color: white;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+.icon_assign_to {
+    cursor: pointer;
+    border: 1px solid grey;
+    border-radius: 4px;
+    padding: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon_assign_to:hover {
+    transform: translateY(-2px) scale(1.05);
+    border-color: #4da3ff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 #team, #assigned_to {
@@ -23,28 +78,48 @@
     margin-left: 10px;
 }
 
-.status-unassigned {
+#status, option, #task_data_priority {
+    cursor: pointer;
+}
+
+.status-unassigned, #status option[value="unassigned"] {
     background-color: purple;
+    border: 2px solid purple;
 }
 
-.status-pending {
+.status-new, #status option[value="new"] {
+    background-color: teal;
+    border: 2px solid teal;
+}
+
+.status-pending, #status option[value="pending"] {
     background-color: orange;
+    border: 2px solid orange;
 }
 
-.status-in_progress {
+.status-in_progress, #status option[value="in_progress"] {
     background-color: blue;
+    border: 2px solid blue;
 }
 
-.status-blocked {
+.status-blocked, #status option[value="blocked"] {
     background-color: red;
+    border: 2px solid red;
 }
 
-.status-for_review {
+.status-for_review, #status option[value="for_review"] {
     background-color: green;
+    border: 2px solid green;
 }
 
-.status-completed {
+.status-completed, #status option[value="completed"] {
+    background-color: grey;
+    border: 2px solid grey;
+}
+
+.status-closed, #status option[value="closed"] {
     background-color: black;
+    border: 2px solid black;
 }
 
 #task_header, #task_data {
@@ -92,20 +167,24 @@ p {
     border-radius: 10px;
 }
 
-.priority-low {
+.priority-low, #task_data_priority option[value="low"] {
     background-color: green;
+    border: 2px solid green;
 }
 
-.priority-medium {
+.priority-medium, #task_data_priority option[value="medium"] {
     background-color: orange;
+    border: 2px solid orange;
 }
 
-.priority-high {
+.priority-high, #task_data_priority option[value="high"] {
     background-color: #d96e66;
+    border: 2px solid #d96e66;
 }
 
-.priority-critical {
+.priority-critical, #task_data_priority option[value="critical"] {
     background-color: darkred;
+    border: 2px solid darkred;
 }
 
 #task_details, #task_comments {
@@ -190,7 +269,7 @@ textarea {
     opacity: 1;
 }
 
-.attachments-scroller{
+.attachments-scroller {
     display:flex;
     gap: 12px;
     overflow-x:auto;
@@ -198,7 +277,7 @@ textarea {
     scroll-snap-type: x proximity;
 }
 
-.thumb-card{
+.thumb-card {
     flex: 0 0 140px;
     text-decoration:none;
     color: inherit;
@@ -210,12 +289,12 @@ textarea {
     box-shadow: 0 1px 2px rgba(0,0,0,.04);
 }
 
-.thumb-card:hover{
+.thumb-card:hover {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(0,0,0,.08);
 }
 
-.thumb{
+.thumb {
     width: 100%;
     height: 96px;
     object-fit: cover;
@@ -224,7 +303,7 @@ textarea {
     background: #f6f7f9;
 }
 
-.thumb-name{
+.thumb-name {
     margin-top: 6px;
     display:flex;
     flex-direction: column;
@@ -232,7 +311,7 @@ textarea {
     gap: 2px;
 }
 
-.thumb-name .name{
+.thumb-name .name {
     font-size: 12px;
     line-height: 1.2;
     max-height: 2.4em;
@@ -243,12 +322,12 @@ textarea {
     -webkit-box-orient: vertical;
 }
 
-.thumb-name .size{
+.thumb-name .size {
     font-size: 11px;
     opacity: .7;
 }
 
-.thumb-card .thumb[src^="/icons/"]{
+.thumb-card .thumb[src^="/icons/"] {
     object-fit: contain;
     background: #f6f7f9;
 }
@@ -345,4 +424,24 @@ textarea {
 .button.btn_ok { 
     background:#2b2e83; 
     color:#fff; 
+}
+
+
+@media (max-width: 1024px) {
+    #task_header, #task_data, #task_details, #task_comments {
+        width: 90%;
+    }
+
+    #task_data {
+        justify-content: space-around;
+    }
+}
+
+@media (max-width: 500px) {
+    #task_header_team_assigned-to_created-at {
+        margin-bottom: 50px;
+        margin-top: 50px;
+        flex-direction: column;
+        gap: 25px;
+    }
 }

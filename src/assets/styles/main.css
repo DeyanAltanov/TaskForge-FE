@@ -54,10 +54,12 @@ main {
 
 .app-footer {
     padding: 18px 16px;
+    box-sizing: border-box;
     background: #211C84;
     color: #B5ABD5;
     text-align: right;
     font-size: 14px;
+    width: 100%;
 }
 
 .content {
