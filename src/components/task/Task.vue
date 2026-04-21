@@ -626,12 +626,27 @@
         const oldStatus = task.value?.status ?? 'unassigned'
         const newStatus = edit.value.status
         const hasAssignedUser = !!task.value?.assigned_to
+        const currentPriority = task.value?.priority ?? 'medium'
 
         if (newStatus === oldStatus) return
 
         if (!hasAssignedUser && newStatus !== 'unassigned') {
             edit.value.status = oldStatus
-            showWarning('Please assign the task to a user, before changing the priority.')
+
+            showWarning('Please assign the task to a user before changing the status.')
+            return
+        }
+
+        const blockedStatuses = ['for_review', 'completed', 'closed']
+        const blockedPriorities = ['high', 'critical']
+
+        if (
+            blockedStatuses.includes(newStatus) &&
+            blockedPriorities.includes(currentPriority)
+        ) {
+            edit.value.status = oldStatus
+
+            showWarning('Please lower the priority before moving the task to For Review, Completed or Closed.')
             return
         }
 
@@ -641,7 +656,9 @@
             return
         }
 
-        await confirmAndUpdate('status', oldStatus, newStatus, { status: newStatus })
+        await confirmAndUpdate('status', oldStatus, newStatus, {
+            status: newStatus
+        })
     }
 
     async function confirmCloseTask() {
