@@ -11,8 +11,12 @@
 
                 <div class="form-field">
                     <label>Description</label>
-                    <input v-model="form.description" @input="clearError('description')" type="text" />
-                    <p v-if="errors.description" class="error">{{ errors.description[0] }}</p>
+
+                    <textarea v-model="form.description" @input="clearError('description')" rows="5" maxlength="2000"></textarea>
+
+                    <p v-if="errors.description" class="error">
+                        {{ errors.description[0] }}
+                    </p>
                 </div>
                 <div class="form-field">
                     <label>Attachments</label>
@@ -67,6 +71,15 @@
                 </div>
             </form>
         </div>
+        <ConfirmDialog
+            v-model="showConfirm"
+            :title="confirmCfg.title"
+            :message="confirmCfg.message"
+            :danger="confirmCfg.danger"
+            :single-button="confirmSingleButton"
+            @ok="confirmOk && confirmOk()"
+            @cancel="confirmCancel && confirmCancel()"
+        />
     </main>
 </template>
 <script setup>
@@ -75,13 +88,13 @@
     import { usePopup  } from '../../stores/popup'
     import axios from 'axios'
     import Multiselect from 'vue-multiselect'
+    import ConfirmDialog from '../partials/ConfirmDialog.vue'
     import 'vue-multiselect/dist/vue-multiselect.min.css'
 
     const router = useRouter()
     const searchResults = ref([])
     const isLoadingUsers = ref(false)
     const inputQuery = ref('')
-
     const form = reactive({
         title: '',
         description: '',
@@ -93,6 +106,13 @@
     const files = ref([])
 
     const { show } = usePopup()
+
+    const showConfirm = ref(false)
+    const confirmCfg = ref({ title: '', message: '', danger: false })
+    const confirmSingleButton = ref(false)
+
+    let confirmOk = null
+    let confirmCancel = null
 
     onMounted(async () => {
         try {
@@ -191,6 +211,12 @@
     }
 
     const create_task = async () => {
+        const ok = await ask('', 'Are you sure you want to create this task?')
+
+        if (!ok) {
+            return
+        }
+
         const formData = new FormData()
         formData.append('title', form.title)
         formData.append('description', form.description)
@@ -211,17 +237,46 @@
         } catch (error) {
             if (error.response?.status === 422 && error.response.data.errors) {
                 Object.assign(errors, error.response.data.errors)
-                const firstField = Object.keys(error.response.data.errors)[0]
-                const firstError = error.response.data.errors[firstField][0]
             } else {
                 const msg =
-                error.response?.data?.message ||
-                error.message || 
-                'Unexpected error'
+                    error.response?.data?.message ||
+                    error.message ||
+                    'Unexpected error'
 
                 show(msg, 'error')
             }
         }
+    }
+
+    function ask(message, title = 'Are you sure?', danger = false) {
+        if (showConfirm.value) {
+            confirmCancel?.()
+            confirmOk = null
+            confirmCancel = null
+            showConfirm.value = false
+        }
+
+        confirmSingleButton.value = false
+        confirmCfg.value = { title, message, danger }
+        showConfirm.value = true
+
+        return new Promise(resolve => {
+            confirmOk = () => {
+                showConfirm.value = false
+                confirmSingleButton.value = false
+                confirmOk = null
+                confirmCancel = null
+                resolve(true)
+            }
+
+            confirmCancel = () => {
+                showConfirm.value = false
+                confirmSingleButton.value = false
+                confirmOk = null
+                confirmCancel = null
+                resolve(false)
+            }
+        })
     }
 </script>
 <style scoped>

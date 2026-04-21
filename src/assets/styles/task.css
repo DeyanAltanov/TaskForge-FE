@@ -352,7 +352,7 @@ textarea {
 }
 
 #comment_info {
-    width: 40%;
+    width: 60%;
     margin-left: 5px;
 }
 
@@ -434,6 +434,21 @@ textarea {
 
     #task_data {
         justify-content: space-around;
+    }
+}
+
+@media (max-width: 600px) {
+    #comment_name_date {
+        flex-direction: column;
+    }
+
+    #comment_name, .comment_dates {
+        margin-left: 0;
+    }
+
+    #comment_comment p {
+        font-size: 14px;
+        text-align: start;
     }
 }
 
